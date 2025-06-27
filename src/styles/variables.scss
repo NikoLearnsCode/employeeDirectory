@@ -122,6 +122,7 @@ $transition-slow: 0.3s ease;
   @include button-base;
   background-color: transparent;
   border: 1px solid $border-color;
+  padding: $spacing-sm $spacing-md;
   color: $text-color;
 
   &:hover:not(:disabled) {
