@@ -1,6 +1,6 @@
 <template>
   <div class="employee-card">
-    <!-- Image -->
+    <!-- Bild -->
     <img
       :src="user.image"
       :alt="`${user.firstName} ${user.lastName}`"
@@ -8,16 +8,16 @@
       @error="handleImageError"
     />
 
-    <!-- Name -->
+    <!-- Namn -->
     <h3 class="employee-name">{{ user.firstName }} {{ user.lastName }}</h3>
 
-    <!-- Department + Title -->
+    <!-- Avdelning + Roll -->
     <div v-if="user.company" class="company-info">
       <div class="department">{{ user.company.department }}</div>
       <div class="title">{{ user.company.title }}</div>
     </div>
 
-    <!-- Email -->
+    <!-- Mail -->
     <a
       :href="`mailto:${user.email}`"
       class="employee-email"
@@ -69,7 +69,7 @@ const handleImageError = (event) => {
     padding: $spacing-lg;
   }
 
-  // Image
+  // Bild
   .employee-image {
     width: 60px;
     height: 60px;
@@ -95,7 +95,7 @@ const handleImageError = (event) => {
     }
   }
 
-  // Name
+  // Namn
   .employee-name {
     margin: 0 0 $spacing-sm 0;
     font-size: 1.1rem;
@@ -115,7 +115,7 @@ const handleImageError = (event) => {
     }
   }
 
-  // Department + Title
+  // Avdelning + Roll
   .company-info {
     margin-bottom: $spacing-lg;
 
@@ -148,7 +148,7 @@ const handleImageError = (event) => {
     }
   }
 
-  // Email
+  // Mail
   .employee-email {
     @include button-secondary;
     color: $gray-800;

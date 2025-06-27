@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import EmployeeCard from './EmployeeCard.vue';
+import EmployeeCard from './Card.vue';
 
 defineProps({
   users: {
