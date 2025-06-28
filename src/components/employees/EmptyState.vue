@@ -52,23 +52,21 @@ defineEmits(['clear-filters']);
     line-height: 1.5;
 
     .clear-filters-btn {
-      background: none;
-      border: none;
+      @include button-base;
       text-decoration: underline;
       text-underline-offset: 2px;
       font-size: 1rem;
       color: $gray-900;
-      cursor: pointer;
       transition: all $transition-normal;
       font-weight: 500;
-      display: inline;
+
 
       &:hover {
         color: $gray-600;
         text-decoration-color: $gray-400;
       }
 
-      @include focusable;
+     
     }
   }
 }

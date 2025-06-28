@@ -156,7 +156,7 @@ const shouldShow = computed(() => {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: $spacing-sm $spacing-lg $spacing-lg;
+  padding: $spacing-sm $spacing-lg $spacing-xs;
   gap: $spacing-sm;
   flex-wrap: wrap;
   margin-bottom: $spacing-lg;
@@ -171,7 +171,7 @@ const shouldShow = computed(() => {
   .results-info {
     color: $text-muted;
     font-size: 0.9rem;
-    padding: $spacing-xs;
+    padding: $spacing-sm $spacing-xs;
 
     @media (min-width: 1001px) {
       padding: 0.6rem 0;
@@ -195,12 +195,13 @@ const shouldShow = computed(() => {
   padding: $spacing-sm $spacing-md;
   transition: all $transition-normal;
   min-width: 130px;
+  margin-bottom: $spacing-sm;
   flex-direction: column;
 
   @media (min-width: 1001px) {
     flex-direction: row;
     align-items: center;
-
+    margin-bottom: 0;
     gap: $spacing-sm;
   }
 
@@ -256,7 +257,11 @@ const shouldShow = computed(() => {
       color: $text-color;
       font-weight: 600;
       font-size: 0.8rem;
-      margin-left: $spacing-md;
+      margin-left: $spacing-sm;
+
+      @media (min-width: 1001px) {
+        margin-left: 1px;
+      }
     }
   }
 
@@ -294,7 +299,7 @@ const shouldShow = computed(() => {
 }
 
 .chain-arrow {
-  color: $text-muted;
+  color: $gray-400;
   display: flex;
   align-items: center;
 }
