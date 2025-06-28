@@ -36,6 +36,16 @@
         :total-pages="totalPages"
         @page-change="handlePageChange"
       />
+
+      <!-- Scroll till toppen button -->
+      <button
+        v-if="paginatedEmployees.length > 3"
+        @click="scrollToTop('smooth')"
+        class="scroll-to-top-btn"
+        title="Scrolla till toppen"
+      >
+        <ChevronUp :size="20" />
+      </button>
     </div>
   </main>
 </template>
@@ -48,6 +58,7 @@ import ErrorMessage from '@/components/shared/ErrorMessage.vue';
 import Pagination from '@/components/employees/Pagination.vue';
 import Filters from '@/components/employees/Filters.vue';
 import ActiveFilters from '@/components/employees/ActiveFilters.vue';
+import {ChevronUp} from 'lucide-vue-next';
 
 // States
 const allEmployees = ref([]);
@@ -192,6 +203,13 @@ const paginatedEmployees = computed(() => {
 // Sidbyte
 const handlePageChange = (page) => {
   currentPage.value = page;
+  if (window.scrollY > 50) {
+    scrollToTop('instant');
+  }
+};
+
+const scrollToTop = (behavior = 'smooth' | 'instant') => {
+  window.scrollTo({top: 0, behavior});
 };
 
 // Visat antal
@@ -252,6 +270,34 @@ onMounted(() => {
         align-items: flex-end;
         margin-bottom: $spacing-lg;
       }
+    }
+  }
+  .scroll-to-top-btn {
+    @include button-base;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin: 2rem auto 0;
+    border-radius: $radius-full;
+    border: 1px solid $border-color;
+    color: $text-muted;
+
+    &:hover {
+      transform: translateY(-3px);
+    }
+
+    &:active {
+      transform: translateY(-3px);
+    }
+
+    &:focus-visible {
+      border-radius: $radius-full;
+    }
+
+    @media (min-width: 1201px) {
+      display: none;
     }
   }
 }
