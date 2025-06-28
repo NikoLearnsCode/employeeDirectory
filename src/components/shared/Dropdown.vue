@@ -16,7 +16,10 @@
       :aria-expanded="isOpen"
       :aria-haspopup="true"
     >
-      <span class="dropdown-text">
+      <span
+        class="dropdown-text"
+        :class="{'is-selected': value && !customLabel}"
+      >
         {{ customLabel || selectedLabel || placeholder }}
       </span>
       <ChevronDown
@@ -24,7 +27,7 @@
         :size="20"
         :stroke-width="1.5"
         class="dropdown-arrow"
-        :class="{'is-rotated': isOpen}"
+        :class="{'is-rotated': isOpen, 'is-selected': value && !customLabel}"
       />
     </button>
 
@@ -38,7 +41,7 @@
         @click.stop
       >
         <div class="dropdown-options">
-          <!-- Clear/All option (endast för filter-dropdowns) -->
+          <!-- Clear/All option för filter-dropdown -->
           <div
             v-if="!hideFirstOption"
             class="dropdown-option"
@@ -87,7 +90,7 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: 'Välj...',
+    default: 'Välj..',
   },
   disabled: {
     type: Boolean,
@@ -239,29 +242,15 @@ onUnmounted(() => {
 // Base Container
 .custom-dropdown {
   position: relative;
-  width: 100%;
 }
 
 // Trigger button
 .dropdown-trigger {
-  display: flex;
-  align-items: center;
-  width: 100%;
+  @include button-base;
   padding: $spacing-sm $spacing-lg;
-
-  border: none !important;
-  border-radius: $radius-md;
   font-size: 1rem;
   text-align: left;
-  cursor: pointer;
-
-  outline: none !important;
-  box-shadow: none !important;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-
-  transition: background-color $transition-normal;
+  transition: background-color 0.2s ease-out;
 
   &:focus-visible {
     outline: 2px solid $focus-color !important;
@@ -273,8 +262,14 @@ onUnmounted(() => {
   flex: 1;
   color: $text-color;
 
+  &.is-selected {
+    color: black;
+    font-weight: 500;
+  }
+
   .is-disabled & {
     color: $gray-400;
+    cursor: not-allowed;
   }
 }
 
@@ -282,7 +277,11 @@ onUnmounted(() => {
   flex-shrink: 0;
   margin: 0 $spacing-sm;
   color: $text-muted;
-  transition: transform $transition-normal;
+  transition: transform 0.2s ease-out;
+
+  &.is-selected {
+    color: black;
+  }
 
   &.is-rotated {
     transform: rotate(180deg);
@@ -290,6 +289,7 @@ onUnmounted(() => {
 
   .is-disabled & {
     color: $gray-300;
+    cursor: not-allowed;
   }
 }
 
@@ -300,41 +300,27 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   z-index: 50;
-  min-width: 150px;
   margin-top: $spacing-xs;
   max-width: 350px;
   @include card;
   box-shadow: $shadow-lg;
   overflow: hidden;
+  min-width: 100%;
 
-  @media (min-width: 768px) {
-    max-width: none;
+  @media (min-width: 481px) {
+    min-width: 300px;
+  }
+  @media (min-width: 1001px) {
+    min-width: fit-content;
   }
 }
 
 .dropdown-options {
-  width: 100%;
   overflow-y: auto;
-
   max-height: 250px;
 
   @media (min-width: 768px) {
     max-height: 350px;
-  }
-}
-
-// Dropdown options
-.dropdown-option {
-  padding: $spacing-md $spacing-lg;
-  font-size: 0.9rem;
-  color: $text-color;
-  cursor: pointer;
-  transition: background-color $transition-fast;
-
-  &:hover,
-  &:focus {
-    outline: none;
-    background-color: $gray-100;
   }
 
   &.is-selected {
@@ -343,19 +329,55 @@ onUnmounted(() => {
   }
 }
 
-// Animations
+// Dropdown options
+.dropdown-option {
+  padding: $spacing-md $spacing-lg;
+  font-size: 0.9rem;
+  color: $text-color;
+
+  cursor: pointer;
+  transition: background-color 0.15s ease-out;
+
+  &:hover,
+  &:focus {
+    outline: none;
+    background-color: $gray-100;
+    color: black;
+  }
+
+  &.is-selected {
+    background-color: $gray-100;
+    font-weight: 800;
+  }
+}
+
+// Dropdown animations
 .dropdown-enter-active,
 .dropdown-leave-active {
-  transition: all $transition-fast;
+  transition: all 0.2s ease-out;
 }
 
-.dropdown-enter-from,
+.dropdown-enter-from {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+.dropdown-enter-to {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dropdown-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .dropdown-leave-to {
   opacity: 0;
-  transform: translateY(-$spacing-sm) scale(0.95);
+  transform: translateY(-8px);
 }
 
-// DropUP variants för Pagination
+// Dropdown variants för Pagination.vue
 .page-dropdown {
   display: flex;
   justify-content: center;
@@ -367,12 +389,21 @@ onUnmounted(() => {
   .dropdown-menu {
     top: auto;
     bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    min-width: 100px;
+    min-width: 85px;
     max-width: 150px;
     margin-top: 0;
     margin-bottom: $spacing-xs;
+  }
+
+  // Animations reverse
+  .dropdown-enter-from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  .dropdown-leave-to {
+    opacity: 0;
+    transform: translateY(8px);
   }
 }
 </style>

@@ -30,6 +30,7 @@ defineEmits(['retry']);
   padding: $spacing-xl $spacing-xl;
   text-align: center;
 
+
   .error-icon {
     margin-bottom: $spacing-2xl;
     display: flex;
@@ -44,10 +45,14 @@ defineEmits(['retry']);
     margin-left: auto;
     margin-right: auto;
     line-height: 1.5;
+
+    
   }
 
   .retry-btn {
-    @include button-secondary;
+
+    @include button-primary;
+
   }
 }
 </style>

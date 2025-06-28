@@ -28,18 +28,16 @@ import {Loader2} from 'lucide-vue-next';
   .spinner {
     margin-bottom: $spacing-lg;
     display: flex;
+    color: $text-muted;
     animation: spin 1s linear infinite;
-    svg {
-      color: $text-muted;
-    }
   }
 
   .loading-text {
-    color: $text-color;
-    font-size: 1.1rem;
+    color: $text-muted;
+    font-size: 1rem;
     margin: 0;
     font-weight: 500;
-    animation: pulse 2s infinite;
+    font-style: italic;
   }
 
   @keyframes spin {
@@ -48,18 +46,6 @@ import {Loader2} from 'lucide-vue-next';
     }
     100% {
       transform: rotate(360deg);
-    }
-  }
-
-  @keyframes pulse {
-    0% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.5;
-    }
-    100% {
-      opacity: 1;
     }
   }
 }

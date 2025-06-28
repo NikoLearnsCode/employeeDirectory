@@ -79,6 +79,7 @@ const goToNextPage = () => {
 
 const goToPage = (pageString) => {
   const page = parseInt(pageString);
+  // Kontrollerar om sidan är en siffra och inte samma som nuvarande sida
   if (page && page !== props.currentPage) {
     emit('page-change', page);
   }
@@ -108,13 +109,9 @@ const goToPage = (pageString) => {
     padding: $spacing-sm;
     color: $gray-500;
 
-    min-width: 2rem;
-    height: 2rem;
+    min-width: 2.25rem;
+    height: 2.25rem;
 
-    @media (min-width: 481px) {
-      min-width: 2.25rem;
-      height: 2.25rem;
-    }
 
     &:hover:not(.disabled) {
       color: $gray-900;
@@ -123,10 +120,6 @@ const goToPage = (pageString) => {
     &.disabled {
       opacity: 0.3;
       cursor: not-allowed;
-
-      &:hover {
-        background-color: transparent;
-      }
     }
   }
 }

@@ -7,7 +7,6 @@
         :value="modelValue.department"
         :options="departmentOptions"
         placeholder="Alla avdelningar"
-        :title="`Filtrera efter avdelning`"
         @update:value="updateFilters('department', $event)"
         :disabled="departments.length === 0"
       />
@@ -20,7 +19,6 @@
         :value="modelValue.title"
         :options="titleOptions"
         placeholder="Alla roller"
-        :title="`Filtrera efter roll`"
         @update:value="updateFilters('title', $event)"
         :disabled="titles.length === 0"
       />
@@ -75,11 +73,14 @@ const titleOptions = computed(() => {
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  width: 100%;
+  justify-content: flex-start;
   gap: $spacing-md;
 
-  @media (min-width: 768px) {
+  @media (min-width: 1000px) {
     flex-direction: row;
     gap: $spacing-sm;
+
     align-items: flex-end;
     flex-wrap: wrap;
     justify-content: flex-end;

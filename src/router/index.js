@@ -1,6 +1,6 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import EmployeeDirectoryView from '@/views/EmployeeDirectoryView.vue'
-import NotFound from '@/views/NotFound.vue'
+import {createRouter, createWebHistory} from 'vue-router';
+import EmployeeDirectoryView from '@/views/EmployeeDirectoryView.vue';
+import NotFound from '@/views/NotFound.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,6 +16,6 @@ const router = createRouter({
       component: NotFound,
     },
   ],
-})
+});
 
-export default router
+export default router;

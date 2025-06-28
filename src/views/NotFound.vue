@@ -10,13 +10,16 @@
       <div class="not-found-actions">
         <router-link to="/" class="back-home-btn">
           Gå tillbaka
+          <ArrowRight class="arrow-icon" :size="18" :stroke-width="1.5" />
         </router-link>
       </div>
     </div>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import {ArrowRight} from 'lucide-vue-next';
+</script>
 
 <style lang="scss" scoped>
 .not-found {
@@ -66,12 +69,27 @@
 
     .not-found-actions {
       .back-home-btn {
-        @include button-secondary;
+        @include button-base;
         font-size: 1rem;
-        color: $gray-600;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        color: $gray-500;
         font-style: italic;
-        border-color: $gray-300;
         padding: $spacing-sm $spacing-md;
+        transition: all $transition-normal;
+        .arrow-icon {
+          margin-left: $spacing-sm;
+          transition: all $transition-normal;
+        }
+
+        &:hover {
+          color: $text-color;
+          .arrow-icon {
+            transform: translateX(5px);
+          }
+        }
       }
     }
   }

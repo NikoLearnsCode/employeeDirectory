@@ -14,6 +14,12 @@
     <div v-else class="employee-directory-content">
       <!-- Filter -->
       <div class="controls">
+        <Search
+          ref="employeeSearchRef"
+          v-model="searchTerm"
+          :results-count="filteredEmployees.length"
+          :is-searching="isLoading"
+        />
         <Filters
           v-model="selectedFilters"
           :departments="availableDepartments"
@@ -23,57 +29,71 @@
 
       <!-- Aktiva filter -->
       <ActiveFilters
-        :displayed-count="displayedCount"
+        :search-term="searchTerm"
+        :filters="selectedFilters"
         :results-count="filteredEmployees.length"
+        :displayed-count="displayedCount"
+        :search-result-count="searchOnlyResults"
+        :department-result-count="departmentChainResults"
+        :title-result-count="titleChainResults"
+        @remove-filter="removeFilter"
       />
+      <div class="results-section">
+        <!-- Inga resultat -->
+        <EmptyState
+          v-if="filteredEmployees.length === 0"
+          @clear-filters="clearAllFilters"
+        />
+        <!-- Grid -->
+        <EmployeeGrid v-else :users="paginatedEmployees" />
 
-      <!-- Grid -->
-      <EmployeeGrid :users="paginatedEmployees" />
+        <Pagination
+          :current-page="currentPage"
+          :total-pages="totalPages"
+          @page-change="handlePageChange"
+        />
 
-      <Pagination
-        v-if="filteredEmployees.length > 0"
-        :current-page="currentPage"
-        :total-pages="totalPages"
-        @page-change="handlePageChange"
-      />
-
-      <!-- Scroll till toppen button -->
-      <button
-        v-if="paginatedEmployees.length > 3"
-        @click="scrollToTop('smooth')"
-        class="scroll-to-top-btn"
-        title="Scrolla till toppen"
-      >
-        <ChevronUp :size="20" />
-      </button>
+        <!-- Scroll top om fler än 3 per sida -->
+        <button
+          v-if="paginatedEmployees.length > 3"
+          @click="scrollToTop('smooth')"
+          class="scroll-to-top-btn"
+          title="Scrolla till toppen"
+        >
+          <ChevronUp :size="20" />
+        </button>
+      </div>
     </div>
   </main>
 </template>
 
 <script setup>
-import {ref, onMounted, computed} from 'vue';
-import Loading from '@/components/employees/Loading.vue';
+import {ref, onMounted, computed, watch} from 'vue';
+import Loading from '@/components/shared/Loading.vue';
 import EmployeeGrid from '@/components/employees/Grid.vue';
 import ErrorMessage from '@/components/shared/ErrorMessage.vue';
 import Pagination from '@/components/employees/Pagination.vue';
 import Filters from '@/components/employees/Filters.vue';
 import ActiveFilters from '@/components/employees/ActiveFilters.vue';
+import Search from '@/components/employees/Search.vue';
+import EmptyState from '@/components/employees/EmptyState.vue';
 import {ChevronUp} from 'lucide-vue-next';
 
-// States
+// State
 const allEmployees = ref([]);
-const isLoading = ref(false);
+const isLoading = ref(true);
 const userFriendlyError = ref(null);
 const currentPage = ref(1);
 const selectedFilters = ref({
   department: '',
   title: '',
 });
+const searchTerm = ref('');
 
 // Constants
 const PEOPLE_PER_PAGE = 10;
 
-// Fetch employees
+// Datahämtning
 const fetchEmployees = async () => {
   isLoading.value = true;
   userFriendlyError.value = null;
@@ -89,19 +109,12 @@ const fetchEmployees = async () => {
     allEmployees.value = data.users;
   } catch (error) {
     console.error('Fel vid hämtning av anställda:', error);
-    // HTTP-error
     if (error.status) {
-      if (error.status === 404) {
-        userFriendlyError.value =
-          'Kunde inte hitta resursen (Fel 404). Kontrollera att webbadressen är korrekt.';
-      }
-      // Server error
-      else {
-        userFriendlyError.value = `Ett oväntat serverfel uppstod (Status: ${error.status}). Försök igen senare.`;
-      }
-    }
-    // Network error
-    else {
+      userFriendlyError.value =
+        error.status === 404
+          ? 'Kunde inte hitta resursen (Fel 404). Kontrollera att webbadressen är korrekt.'
+          : `Ett oväntat serverfel uppstod (Status: ${error.status}). Försök igen senare.`;
+    } else {
       userFriendlyError.value =
         'Ett nätverksfel uppstod. Kontrollera din internetanslutning och försök igen.';
     }
@@ -110,19 +123,52 @@ const fetchEmployees = async () => {
   }
 };
 
-// ============ HJÄLPFUNKTIONER ============
-// Central filter-funktion - filtrerar baserat på aktiva filter
+/* =============== HJÄLPFUNKTIONER ====================== */
+/*
+ * Central filter-funktion. 
+ Filtrerar baserat på de nuvarande aktiva filtren (sök, avdelning, titel)
+ */
 const applyFilters = (employees, options) => {
   let filtered = employees;
 
-  // Avdelning filter - om avdelning-filter är aktivt och en avdelning är vald
+  // Sökfilter (om aktivt)
+  if (options.includeSearch && searchTerm.value) {
+    const search = searchTerm.value.toLowerCase().trim();
+    filtered = filtered.filter((user) => {
+      const firstName = user.firstName.toLowerCase();
+      const lastName = user.lastName.toLowerCase();
+      const email = user.email.toLowerCase();
+      const fullName = `${firstName} ${lastName}`;
+      const searchTerms = search.split(/\s+/);
+      // 1 ord
+      if (searchTerms.length === 1) {
+        return (
+          firstName.includes(search) ||
+          lastName.includes(search) ||
+          email.includes(search) ||
+          fullName.includes(search)
+        );
+      }
+      // Flera ord
+      return (
+        searchTerms.every(
+          (term) =>
+            firstName.includes(term) ||
+            lastName.includes(term) ||
+            fullName.includes(term)
+        ) || email.includes(search)
+      );
+    });
+  }
+
+  // Avdelningsfilter (om aktivt)
   if (options.includeDepartment && selectedFilters.value.department) {
     filtered = filtered.filter(
       (user) => user.company?.department === selectedFilters.value.department
     );
   }
 
-  // Roll filter - om roll-filter är aktivt och en roll är vald
+  // Titelfilter (om aktivt)
   if (options.includeTitle && selectedFilters.value.title) {
     filtered = filtered.filter(
       (user) => user.company?.title === selectedFilters.value.title
@@ -132,40 +178,46 @@ const applyFilters = (employees, options) => {
   return filtered;
 };
 
-// Funktion för att extrahera unika värden från employees
+// Extraherar unika värden, används för att populera filter-dropdowns
 const extractUniqueValues = (employees, field, currentValue = '') => {
   const values = new Set();
-
   if (currentValue) {
     values.add(currentValue);
   }
-
   employees.forEach((employee) => {
     const value = employee.company?.[field];
     if (value) {
       values.add(value);
     }
   });
-
   return Array.from(values);
 };
 
-// ============ BERÄKNINGAR ============
-// Filtered employees - vad som visas i grid
+/* =============== BERÄKNINGAR ====================== */
+
+// Den slutgiltiga listan efter alla filter har applicerats
 const filteredEmployees = computed(() => {
   return applyFilters(allEmployees.value, {
     includeDepartment: true,
     includeTitle: true,
+    includeSearch: true,
   });
 });
 
-// Tillgängliga avdelningar - vad som visas i avdelning-dropdown
+// Anställda som ska visas på den nuvarande sidan
+const paginatedEmployees = computed(() => {
+  const start = (currentPage.value - 1) * PEOPLE_PER_PAGE;
+  const end = start + PEOPLE_PER_PAGE;
+  return filteredEmployees.value.slice(start, end);
+});
+
+// Dynamiskt tillgängliga avdelningar för dropdown-menyn
 const availableDepartments = computed(() => {
   const relevantUsers = applyFilters(allEmployees.value, {
     includeDepartment: false,
     includeTitle: true,
+    includeSearch: true,
   });
-
   return extractUniqueValues(
     relevantUsers,
     'department',
@@ -173,13 +225,13 @@ const availableDepartments = computed(() => {
   );
 });
 
-// Tillgängliga roller - vad som visas i roll-dropdown
+// Dynamiskt tillgängliga titlar för dropdown-menyn
 const availableTitles = computed(() => {
   const relevantUsers = applyFilters(allEmployees.value, {
     includeDepartment: true,
     includeTitle: false,
+    includeSearch: true,
   });
-
   return extractUniqueValues(
     relevantUsers,
     'title',
@@ -187,18 +239,47 @@ const availableTitles = computed(() => {
   );
 });
 
-// =========== PAGINATION ===========
-// Beräkna totala sidor
+// Totalt antal sidor för pagination
 const totalPages = computed(() => {
   return Math.ceil(filteredEmployees.value.length / PEOPLE_PER_PAGE);
 });
 
-// Sida för sida
-const paginatedEmployees = computed(() => {
-  const start = (currentPage.value - 1) * PEOPLE_PER_PAGE;
-  const end = start + PEOPLE_PER_PAGE;
-  return filteredEmployees.value.slice(start, end);
+// Antal per sida
+const displayedCount = computed(() => {
+  const totalResults = filteredEmployees.value.length;
+  if (totalResults === 0) return 0;
+  const start = (currentPage.value - 1) * PEOPLE_PER_PAGE + 1;
+  const end = Math.min(start + PEOPLE_PER_PAGE - 1, totalResults);
+  return `${start}-${end}`;
 });
+
+/* =============== FILTERKEDJER ====================== */
+/* ========= SÖK > AVDELNING > TITEL ========== */
+
+// Antal träffar efter enbart sökfiltret
+const searchOnlyResults = computed(() => {
+  return applyFilters(allEmployees.value, {
+    includeSearch: true,
+    includeDepartment: false,
+    includeTitle: false,
+  }).length;
+});
+
+// Antal träffar efter sök + avdelningsfilter
+const departmentChainResults = computed(() => {
+  return applyFilters(allEmployees.value, {
+    includeSearch: true,
+    includeDepartment: true,
+    includeTitle: false,
+  }).length;
+});
+
+// Antal träffar efter sök + avdelning + titelfilter
+const titleChainResults = computed(() => {
+  return filteredEmployees.value.length; // Samma som slutgiltiga resultatet
+});
+
+/* =============== Event Handlers ====================== */
 
 // Sidbyte
 const handlePageChange = (page) => {
@@ -208,22 +289,42 @@ const handlePageChange = (page) => {
   }
 };
 
-const scrollToTop = (behavior = 'smooth' | 'instant') => {
+// Tar bort ett specifikt filter
+const removeFilter = (filterType) => {
+  switch (filterType) {
+    case 'search':
+      searchTerm.value = '';
+      break;
+    case 'department':
+      selectedFilters.value.department = '';
+      break;
+    case 'title':
+      selectedFilters.value.title = '';
+      break;
+  }
+};
+
+// Återställer alla filter
+const clearAllFilters = () => {
+  searchTerm.value = '';
+  selectedFilters.value.department = '';
+  selectedFilters.value.title = '';
+};
+
+// smooth | instant
+const scrollToTop = (behavior = 'smooth') => {
   window.scrollTo({top: 0, behavior});
 };
 
-// Visat antal
-const displayedCount = computed(() => {
-  const totalResults = filteredEmployees.value.length;
-  if (totalResults === 0) {
-    return 0;
-  }
-  const start = (currentPage.value - 1) * PEOPLE_PER_PAGE + 1;
-  const end = Math.min(start + PEOPLE_PER_PAGE - 1, totalResults);
-  return `${start}-${end}`;
-});
 
-// Hämta fölket
+watch(
+  [searchTerm, selectedFilters],
+  () => {
+    currentPage.value = 1;
+  },
+  {deep: true}
+);
+
 onMounted(() => {
   fetchEmployees();
 });
@@ -231,12 +332,16 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .employee-directory {
+  overscroll-behavior-y: none;
+  overscroll-behavior-x: none;
+
   max-width: 100%;
   width: 100%;
   margin: 0 auto;
   padding: $spacing-2xl 0 $spacing-4xl;
-  @media (min-width: 541px) {
-    padding: $spacing-3xl $spacing-lg $spacing-5xl;
+
+  @media (min-width: 481px) {
+    padding: $spacing-3xl 0 $spacing-3xl 0;
   }
 
   .directory-title {
@@ -260,14 +365,17 @@ onMounted(() => {
     .controls {
       display: flex;
       flex-direction: column;
-      align-items: stretch;
+      align-items: flex-start;
       gap: $spacing-lg;
+      padding: 0 $spacing-xs;
       margin-bottom: $spacing-sm;
 
       @media (min-width: 1001px) {
         flex-direction: row;
-        justify-content: flex-end;
+        justify-content: space-between;
         align-items: flex-end;
+        padding: 0;
+
         margin-bottom: $spacing-lg;
       }
     }

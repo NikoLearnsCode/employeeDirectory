@@ -1,4 +1,3 @@
-
 *,
 *::before,
 *::after {
@@ -15,6 +14,8 @@ body {
   font-family: $font-stack-sans;
   font-size: $base-font-size;
   line-height: 1.6;
+  overscroll-behavior-y: none;
+  overscroll-behavior-x: none;
   color: $text-color;
   background-color: $background-color;
   -webkit-font-smoothing: antialiased;
@@ -28,7 +29,7 @@ a {
   @include focusable;
 
   &:hover {
-    color: $link-hover-color;
+    color: $primary-hover;
     text-decoration: underline;
   }
 }
@@ -59,8 +60,7 @@ svg {
   max-width: 1400px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: $spacing-md;
-  padding-right: $spacing-md;
+  padding: 0 $spacing-sm;
 }
 
 .sr-only {
@@ -76,10 +76,9 @@ svg {
 }
 
 //Animations
-
 @keyframes spinX {
   from {
-    scale: 0.9;
+    scale: 0.6;
     transform: rotate(0deg);
   }
   to {

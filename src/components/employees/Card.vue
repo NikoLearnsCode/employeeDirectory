@@ -5,6 +5,7 @@
       :src="user.image"
       :alt="`${user.firstName} ${user.lastName}`"
       class="employee-image"
+      loading="lazy"
       @error="handleImageError"
     />
 
@@ -39,6 +40,7 @@ defineProps({
   },
 });
 
+// Fallback
 const handleImageError = (event) => {
   event.target.src =
     'https://placehold.co/80x80/e5e7eb/9ca3af?text=Bild%20saknas';
@@ -51,15 +53,12 @@ const handleImageError = (event) => {
   padding: $spacing-lg;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   align-items: center;
   text-align: center;
   gap: $spacing-sm;
   transition: $transition-slow;
-  border: 1px solid $gray-200;
-
-  @media (min-width: 481px) {
-    // padding: $spacing-lg;
-  }
+  border: 1px solid $border-color;
 
   @media (min-width: 769px) {
     padding: $spacing-xl;
@@ -71,23 +70,15 @@ const handleImageError = (event) => {
 
   // Bild
   .employee-image {
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
     border-radius: $radius-full;
     object-fit: cover;
+    box-shadow: $shadow-sm;
     object-position: center;
-    border: 2px solid $gray-200;
+    border: 2px solid $border-color;
+
     margin-bottom: $spacing-sm;
-
-    @media (min-width: 481px) {
-      width: 80px;
-      height: 80px;
-    }
-
-    @media (min-width: 769px) {
-      width: 70px;
-      height: 70px;
-    }
 
     @media (min-width: 1025px) {
       width: 90px;
@@ -150,14 +141,8 @@ const handleImageError = (event) => {
 
   // Mail
   .employee-email {
-    @include button-secondary;
-    color: $gray-800;
-    text-decoration: none;
+    @include button-primary;
     width: 100%;
-    margin-top: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     gap: $spacing-sm;
   }
 }
