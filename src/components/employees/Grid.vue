@@ -21,10 +21,12 @@ defineProps({
   grid-template-columns: 1fr;
   gap: $spacing-lg;
   margin-bottom: $spacing-3xl;
-  padding: 0 $spacing-sm;
+  
+  
 
   @media (min-width: 481px) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+
   }
 
   @media (min-width: 641px) {
@@ -38,6 +40,7 @@ defineProps({
   @media (min-width: 1201px) {
     grid-template-columns: repeat(5, minmax(0, 1fr));
     min-height: 300px;
+    
   }
 }
 </style>

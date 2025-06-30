@@ -100,13 +100,14 @@ const fetchEmployees = async () => {
 
   try {
     const response = await fetch(
-      'https://dummyjson.com/users?limit=0&select=id,firstName,lastName,email,image,company&order=asc'
+      'https://dummyjson.com/users?limit=0&select=id,firstName,lastName,email,image,company'
     );
     if (!response.ok) {
       throw response;
     }
     const data = await response.json();
     allEmployees.value = data.users;
+
   } catch (error) {
     console.error('Fel vid hämtning av anställda:', error);
     if (error.status) {
@@ -190,7 +191,7 @@ const extractUniqueValues = (employees, field, currentValue = '') => {
       values.add(value);
     }
   });
-  return Array.from(values);
+  return Array.from(values).sort();
 };
 
 /* =============== BERÄKNINGAR ====================== */
@@ -332,8 +333,7 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .employee-directory {
-  overscroll-behavior-y: none;
-  overscroll-behavior-x: none;
+
 
   max-width: 100%;
   width: 100%;
@@ -341,7 +341,7 @@ onMounted(() => {
   padding: $spacing-2xl 0 $spacing-4xl;
 
   @media (min-width: 481px) {
-    padding: $spacing-3xl 0 $spacing-3xl 0;
+    padding: $spacing-3xl $spacing-md $spacing-3xl;
   }
 
   .directory-title {

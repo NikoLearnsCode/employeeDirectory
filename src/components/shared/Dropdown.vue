@@ -383,14 +383,12 @@ onUnmounted(() => {
   justify-content: center;
   align-items: center;
   text-align: center;
-  width: fit-content;
+  width: 100px;
 
   // DropUP istället för dropdown
   .dropdown-menu {
     top: auto;
     bottom: 100%;
-    min-width: 85px;
-    max-width: 150px;
     margin-top: 0;
     margin-bottom: $spacing-xs;
   }
