@@ -19,7 +19,8 @@ defineProps({
 .employee-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: $spacing-lg;
+   row-gap: $spacing-4xl;
+  padding-top: $spacing-xl;
   margin-bottom: $spacing-3xl;
   
   
@@ -39,7 +40,7 @@ defineProps({
 
   @media (min-width: 1201px) {
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    min-height: 300px;
+
     
   }
 }

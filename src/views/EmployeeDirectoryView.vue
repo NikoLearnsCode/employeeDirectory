@@ -100,14 +100,13 @@ const fetchEmployees = async () => {
 
   try {
     const response = await fetch(
-      'https://dummyjson.com/users?limit=0&select=id,firstName,lastName,email,image,company'
+      'https://dummyjson.com/users?limit=0&select=id,firstName,lastName,phone,email,image,company'
     );
     if (!response.ok) {
       throw response;
     }
     const data = await response.json();
     allEmployees.value = data.users;
-
   } catch (error) {
     console.error('Fel vid hämtning av anställda:', error);
     if (error.status) {
@@ -317,7 +316,6 @@ const scrollToTop = (behavior = 'smooth') => {
   window.scrollTo({top: 0, behavior});
 };
 
-
 watch(
   [searchTerm, selectedFilters],
   () => {
@@ -333,8 +331,6 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .employee-directory {
-
-
   max-width: 100%;
   width: 100%;
   margin: 0 auto;

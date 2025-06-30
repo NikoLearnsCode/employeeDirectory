@@ -12,26 +12,37 @@
     <!-- Namn -->
     <h3 class="employee-name">{{ user.firstName }} {{ user.lastName }}</h3>
 
-    <!-- Avdelning + Roll -->
+    <!-- Titel + Avdelning -->
     <div v-if="user.company" class="company-info">
-      <div class="department">{{ user.company.department }}</div>
       <div class="title">{{ user.company.title }}</div>
+      <div class="department">{{ user.company.department }}</div>
     </div>
 
-    <!-- Mail -->
-    <a
-      :href="`mailto:${user.email}`"
-      class="employee-email"
-      :title="`Kontakta ${user.firstName} ${user.lastName}`"
-    >
-      <Mail :size="20" :stroke-width="1" />
-      Kontakt
-    </a>
+    <!-- Kontakt ikoner -->
+    <div class="contact-icons">
+      <!-- Mail -->
+      <a
+        :href="`mailto:${user.email}`"
+        class="contact-icon"
+        :title="`Skicka mail till ${user.firstName} ${user.lastName}`"
+      >
+        <Mail :size="22" :stroke-width="1.5" />
+      </a>
+
+      <!-- Telefon -->
+      <a
+        :href="`tel:${user.phone}`"
+        class="contact-icon"
+        :title="`Ring ${user.firstName} ${user.lastName} (${user.phone})`"
+      >
+        <Phone :size="22" :stroke-width="1.5" />
+      </a>
+    </div>
   </div>
 </template>
 
 <script setup>
-import {Mail} from 'lucide-vue-next';
+import {Mail, Phone} from 'lucide-vue-next';
 
 defineProps({
   user: {
@@ -49,101 +60,68 @@ const handleImageError = (event) => {
 
 <style lang="scss" scoped>
 .employee-card {
-  @include card;
-  padding: $spacing-lg;
+  padding: 0 $spacing-md;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   text-align: center;
-  gap: $spacing-sm;
-  transition: $transition-slow;
-  border: 1px solid $border-color;
+  gap: $spacing-xs;
 
-  @media (min-width: 769px) {
-    padding: $spacing-xl;
-  }
-
-  @media (min-width: 1025px) {
-    padding: $spacing-lg;
-  }
+  border-radius: $radius-lg;
 
   // Bild
   .employee-image {
-    width: 80px;
-    height: 80px;
+    width: 130px;
+    height: 130px;
     border-radius: $radius-full;
     object-fit: cover;
-    box-shadow: $shadow-sm;
+    border: 2px solid $gray-200;
     object-position: center;
-    border: 2px solid $border-color;
-
-    margin-bottom: $spacing-sm;
-
-    @media (min-width: 1025px) {
-      width: 90px;
-      height: 90px;
-    }
+    transition: border-color $transition-normal;
   }
 
   // Namn
   .employee-name {
-    margin: 0 0 $spacing-sm 0;
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 1.2rem;
+    font-weight: 700;
     color: $text-color;
-
-    @media (min-width: 481px) {
-      font-size: 1.125rem;
-    }
-
-    @media (min-width: 769px) {
-      font-size: 1.125rem;
-    }
-
-    @media (min-width: 1025px) {
-      font-size: 1.25rem;
-    }
   }
 
-  // Avdelning + Roll
+  // Titel + Avdelning
   .company-info {
-    margin-bottom: $spacing-lg;
-
-    .department {
-      font-size: 1rem;
-      font-weight: 500;
-      color: $text-color;
-      margin-bottom: $spacing-xs;
-
-      @media (min-width: 481px) {
-        font-size: 0.9rem;
-      }
-
-      @media (min-width: 1025px) {
-        font-size: 1rem;
-      }
-    }
-
     .title {
       font-size: 0.9rem;
+      font-weight: 600;
+      color: $text-color;
+    }
+
+    .department {
+      font-size: 0.9rem;
       color: $gray-500;
-
-      @media (min-width: 481px) {
-        font-size: 0.8rem;
-      }
-
-      @media (min-width: 1025px) {
-        font-size: 0.9rem;
-      }
+      font-weight: 500;
     }
   }
 
-  // Mail
-  .employee-email {
-    @include button-primary;
-    width: 100%;
-    gap: $spacing-sm;
+  // Kontakt ikoner
+  .contact-icons {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+
+    justify-content: center;
+    padding-top: $spacing-sm;
+
+    .contact-icon {
+      padding: $spacing-xs $spacing-sm;
+      color: $gray-500;
+      transition: $transition-normal;
+
+      &:hover {
+        color: $gray-900;
+        transform: scale(1.05);
+      }
+    }
   }
 }
 </style>
