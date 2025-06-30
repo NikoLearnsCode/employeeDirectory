@@ -5,7 +5,7 @@
       :src="user.image"
       :alt="`${user.firstName} ${user.lastName}`"
       class="employee-image"
-      loading="lazy"
+      loading="eager"
       @error="handleImageError"
     />
 
