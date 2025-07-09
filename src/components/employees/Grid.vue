@@ -19,14 +19,15 @@ defineProps({
 .employee-grid {
   display: grid;
   grid-template-columns: 1fr;
-   row-gap: $spacing-4xl;
+   row-gap: $spacing-3xl;
   padding-top: $spacing-xl;
-  margin-bottom: $spacing-3xl;
+  margin-bottom: $spacing-4xl;
   
   
 
   @media (min-width: 481px) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: $spacing-4xl;
 
   }
 

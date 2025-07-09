@@ -75,12 +75,10 @@ const titleOptions = computed(() => {
   align-items: stretch;
   width: 100%;
   justify-content: flex-start;
-  gap: $spacing-md;
+  gap: $spacing-sm; 
 
   @media (min-width: 1000px) {
     flex-direction: row;
-    gap: $spacing-sm;
-
     align-items: flex-end;
     flex-wrap: wrap;
     justify-content: flex-end;

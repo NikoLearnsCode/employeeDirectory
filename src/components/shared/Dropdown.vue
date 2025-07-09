@@ -390,6 +390,7 @@ onUnmounted(() => {
     top: auto;
     bottom: 100%;
     margin-top: 0;
+    min-width: 100px;
     margin-bottom: $spacing-xs;
   }
 

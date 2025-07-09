@@ -26,7 +26,7 @@
         class="contact-icon"
         :title="`Skicka mail till ${user.firstName} ${user.lastName}`"
       >
-        <Mail :size="22" :stroke-width="1.5" />
+        <Mail :size="20" :stroke-width="1.5" />
       </a>
 
       <!-- Telefon -->
@@ -35,7 +35,7 @@
         class="contact-icon"
         :title="`Ring ${user.firstName} ${user.lastName} (${user.phone})`"
       >
-        <Phone :size="22" :stroke-width="1.5" />
+        <Phone :size="20" :stroke-width="1.5" />
       </a>
     </div>
   </div>
@@ -107,19 +107,23 @@ const handleImageError = (event) => {
   .contact-icons {
     display: flex;
     align-items: center;
-    gap: $spacing-xs;
-
+    gap: $spacing-sm;
     justify-content: center;
     padding-top: $spacing-sm;
+
+  
 
     .contact-icon {
       padding: $spacing-xs $spacing-sm;
       color: $gray-500;
-      transition: $transition-normal;
+
+      @media (min-width: 1201px) {
+        padding: $spacing-xs;
+      }
+
 
       &:hover {
         color: $gray-900;
-        transform: scale(1.05);
       }
     }
   }

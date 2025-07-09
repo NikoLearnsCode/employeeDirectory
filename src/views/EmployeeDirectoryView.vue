@@ -362,7 +362,7 @@ onMounted(() => {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      gap: $spacing-lg;
+      gap: $spacing-md;
       padding: 0 $spacing-xs;
       margin-bottom: $spacing-sm;
 
